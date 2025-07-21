@@ -3,6 +3,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
+  type CustomTooltipProps,
   type ChartConfig,
 } from "~/components/ui/chart";
 import { ChartContainer } from "~/components/ui/chart";
@@ -98,15 +99,16 @@ function App() {
           />
           <ChartTooltip
             cursor={false}
-            content={
+            content={(props: CustomTooltipProps) => (
               <ChartTooltipContent
+                {...props}
                 indicator="line"
                 labelKey="gross"
                 labelFormatter={(value) =>
                   new Intl.NumberFormat().format(value)
                 }
               />
-            }
+            )}
           />
           <ChartLegend content={<ChartLegendContent payload={undefined} />} />
           <Area
