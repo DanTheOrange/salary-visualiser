@@ -50,6 +50,7 @@ export type CustomTooltipProps = TooltipContentProps<ValueType, NameType> & {
   ) => React.ReactNode;
   labelClassName?: string;
   color?: string;
+  showPercent?: boolean;
 };
 
 export type ChartLegendContentProps = {
@@ -156,6 +157,7 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
+  showPercent = false,
 }: CustomTooltipProps) {
   const { config } = useChart();
 
@@ -259,7 +261,7 @@ function ChartTooltipContent({
                   )}
                   <div
                     className={cn(
-                      "flex flex-1 justify-between leading-none",
+                      "flex flex-1 justify-between leading-none gap-2",
                       nestLabel ? "items-end" : "items-center"
                     )}
                   >
@@ -270,8 +272,17 @@ function ChartTooltipContent({
                       </span>
                     </div>
                     {item.value && (
-                      <span className="text-foreground font-mono font-medium tabular-nums">
-                        {item.value.toLocaleString()}
+                      <span className="flex flex-row gap-1 text-foreground font-mono font-medium tabular-nums">
+                        <span>{item.value.toLocaleString()}</span>
+                        {showPercent && (
+                          <span className="text-muted-foreground">
+                            (
+                            {((item.value / item.payload.gross) * 100).toFixed(
+                              2
+                            )}
+                            %)
+                          </span>
+                        )}
                       </span>
                     )}
                   </div>

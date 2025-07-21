@@ -110,6 +110,7 @@ function App() {
                 labelFormatter={(value) =>
                   new Intl.NumberFormat().format(value)
                 }
+                showPercent
               />
             )}
           />
