@@ -65,7 +65,7 @@ function App() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="m-4">
+    <div className="m-4 max-h-screen overflow-none">
       <div className="flex items-center justify-between mb-4">
         <h1>Salary visualiser</h1>
         <div className="flex items-center gap-2">
@@ -78,7 +78,10 @@ function App() {
           <ModeToggle />
         </div>
       </div>
-      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+      <ChartContainer
+        config={chartConfig}
+        className="min-h-[200px] max-h-[calc(100vh_-_5.5rem)] w-full"
+      >
         <AreaChart
           accessibilityLayer
           data={chartData}
