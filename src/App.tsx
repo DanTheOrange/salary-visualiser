@@ -16,7 +16,7 @@ import { Separator } from "./components/ui/separator";
 const chartConfig = {
   pension: {
     label: "Pension",
-    color: "#f59e0b", // Yellow for pension contributions
+    color: "#09e193", // Light Green for pension contributions
   },
   ni: {
     label: "NI",
@@ -28,12 +28,21 @@ const chartConfig = {
   },
   net: {
     label: "Net",
-    color: "#22c55e", // Bright green for take-home pay
+    color: "#009f3b", // green for take-home pay
+  },
+  studentLoan: {
+    label: "Student Loan",
+    color: "#f59e0b",
+  },
+  postgrad: {
+    label: "Postgrad Loan",
+    color: "#955400",
   },
 } satisfies ChartConfig;
 
 function App() {
-  const { pensionContributionType, proportional } = useChartData();
+  const { pensionContributionType, studentLoans, proportional } =
+    useChartData();
   const { chartData } = useChartData();
 
   return (
@@ -112,6 +121,26 @@ function App() {
                 fill="var(--color-pension)"
                 fillOpacity={0.2}
                 stroke="var(--color-pension)"
+                stackId="a"
+              />
+            )}
+            {(studentLoans.plan1 === true ||
+              studentLoans.plan2 === true ||
+              studentLoans.plan5 === true) && (
+              <Area
+                dataKey="studentLoan"
+                fill="var(--color-studentLoan)"
+                fillOpacity={0.2}
+                stroke="var(--color-studentLoan)"
+                stackId="a"
+              />
+            )}
+            {studentLoans.postgrad === true && (
+              <Area
+                dataKey="postgrad"
+                fill="var(--color-postgrad)"
+                fillOpacity={0.2}
+                stroke="var(--color-postgrad)"
                 stackId="a"
               />
             )}

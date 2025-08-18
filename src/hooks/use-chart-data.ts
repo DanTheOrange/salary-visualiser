@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
+import { useEffect } from "react";
 
 type ChartData = {
   gross: number;
@@ -8,6 +9,8 @@ type ChartData = {
   tax: number;
   ni: number;
   net: number;
+  studentLoan: number;
+  postgrad: number;
 }[];
 
 // Default chart data with various income levels
@@ -15,29 +18,141 @@ type ChartData = {
 // This data comes from online calculators and is partially test data
 const DEFAULT_CHART_DATA: ChartData = [
   // Starting point
-  { gross: 0, pension: 0, tax: 0, ni: 0, net: 0 },
+  { gross: 0, pension: 0, tax: 0, ni: 0, net: 0, studentLoan: 0, postgrad: 0 },
   // Personal allowance threshold
-  { gross: 12570, pension: 0, tax: 0, ni: 0, net: 12570 },
+  {
+    gross: 12570,
+    pension: 0,
+    tax: 0,
+    ni: 0,
+    net: 12570,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Just above personal allowance
-  { gross: 15000, pension: 0, tax: 486, ni: 194.4, net: 14319.6 },
+  {
+    gross: 15000,
+    pension: 0,
+    tax: 486,
+    ni: 194.4,
+    net: 14319.6,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Mid basic rate
-  { gross: 25000, pension: 0, tax: 2486, ni: 994.4, net: 21519.6 },
-  { gross: 35000, pension: 0, tax: 4486, ni: 1794.4, net: 28719.6 },
-  { gross: 45000, pension: 0, tax: 6486, ni: 2594.4, net: 35919.6 },
+  {
+    gross: 25000,
+    pension: 0,
+    tax: 2486,
+    ni: 994.4,
+    net: 21519.6,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 35000,
+    pension: 0,
+    tax: 4486,
+    ni: 1794.4,
+    net: 28719.6,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 45000,
+    pension: 0,
+    tax: 6486,
+    ni: 2594.4,
+    net: 35919.6,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Basic rate threshold (£50,270)
-  { gross: 50270, pension: 0, tax: 7540, ni: 3016, net: 39714 },
+  {
+    gross: 50270,
+    pension: 0,
+    tax: 7540,
+    ni: 3016,
+    net: 39714,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Higher rate starts
-  { gross: 60000, pension: 0, tax: 11432, ni: 3210.6, net: 45357.4 },
-  { gross: 75000, pension: 0, tax: 17432, ni: 3510.6, net: 54057.4 },
-  { gross: 100000, pension: 0, tax: 27432, ni: 4010.6, net: 68557.4 },
+  {
+    gross: 60000,
+    pension: 0,
+    tax: 11432,
+    ni: 3210.6,
+    net: 45357.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 75000,
+    pension: 0,
+    tax: 17432,
+    ni: 3510.6,
+    net: 54057.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 100000,
+    pension: 0,
+    tax: 27432,
+    ni: 4010.6,
+    net: 68557.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Personal allowance starts tapering (£100,000+)
-  { gross: 110000, pension: 0, tax: 33432, ni: 4210.6, net: 72357.4 },
+  {
+    gross: 110000,
+    pension: 0,
+    tax: 33432,
+    ni: 4210.6,
+    net: 72357.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Personal allowance fully tapered at £125,140
-  { gross: 125140, pension: 0, tax: 42516, ni: 4513.4, net: 78110.6 },
+  {
+    gross: 125140,
+    pension: 0,
+    tax: 42516,
+    ni: 4513.4,
+    net: 78110.6,
+    studentLoan: 0,
+    postgrad: 0,
+  },
   // Additional rate threshold (£125,140+)
-  { gross: 150000, pension: 0, tax: 53703, ni: 5010.6, net: 91286.4 },
-  { gross: 200000, pension: 0, tax: 76203, ni: 6010.6, net: 117786.4 },
-  { gross: 300000, pension: 0, tax: 121203, ni: 8010.6, net: 170786.4 },
+  {
+    gross: 150000,
+    pension: 0,
+    tax: 53703,
+    ni: 5010.6,
+    net: 91286.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 200000,
+    pension: 0,
+    tax: 76203,
+    ni: 6010.6,
+    net: 117786.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
+  {
+    gross: 300000,
+    pension: 0,
+    tax: 121203,
+    ni: 8010.6,
+    net: 170786.4,
+    studentLoan: 0,
+    postgrad: 0,
+  },
 ];
 
 export const PENSION_CONTRIBUTION_TYPES = [
@@ -48,28 +163,49 @@ export const PENSION_CONTRIBUTION_TYPES = [
 export type PensionContributionType =
   (typeof PENSION_CONTRIBUTION_TYPES)[number];
 
+export const STUDENT_LOANS = ["plan1", "plan2", "plan5", "postgrad"] as const;
+export type StudentLoanPlan = (typeof STUDENT_LOANS)[number];
+
+type StudentLoans = {
+  [key in StudentLoanPlan]: boolean;
+};
+
+const DEFAULT_STUDENT_LOANS: StudentLoans = {
+  plan1: false,
+  plan2: false,
+  plan5: false,
+  postgrad: false,
+};
+
 interface ChartState {
+  chartPoints: number[];
   chartData: ChartData;
   taxFreeAllowance: number;
   pensionContributionType: PensionContributionType;
   pensionContribution: number;
   proportional: boolean;
+  studentLoans: StudentLoans;
+  setChartPoints: (points: number[]) => void;
   setChartData: (data: ChartData) => void;
   setTaxFreeAllowance: (amount: number) => void;
   setPensionContributionType: (type: PensionContributionType) => void;
   setPensionContribution: (amount: number) => void;
   setProportional: (value: boolean) => void;
+  setStudentLoans: (loans: StudentLoans) => void;
 }
 
 const useChartStore = create<ChartState>()(
   devtools(
     persist(
       (set) => ({
+        chartPoints: DEFAULT_CHART_DATA.map((data) => data.gross),
         chartData: DEFAULT_CHART_DATA,
         taxFreeAllowance: 12570,
         pensionContributionType: "percentage",
         pensionContribution: 0,
         proportional: false,
+        studentLoans: DEFAULT_STUDENT_LOANS,
+        setChartPoints: (points) => set({ chartPoints: points }),
         setChartData: (data) => set({ chartData: data }),
         setTaxFreeAllowance: (amount) => set({ taxFreeAllowance: amount }),
         setPensionContributionType: (type) =>
@@ -77,6 +213,7 @@ const useChartStore = create<ChartState>()(
         setPensionContribution: (amount) =>
           set({ pensionContribution: amount }),
         setProportional: (value) => set({ proportional: value }),
+        setStudentLoans: (loans) => set({ studentLoans: loans }),
       }),
       {
         name: "chart-storage",
@@ -98,11 +235,19 @@ const NI_BRACKETS = [
   { threshold: Infinity, rate: 0.02 }, // Over £50,270: 2%
 ];
 
+const STUDENT_LOAN_BRACKETS = {
+  plan1: { threshold: 26_065, rate: 0.09 },
+  plan2: { threshold: 28_470, rate: 0.09 },
+  plan5: { threshold: 25_000, rate: 0.09 },
+  postgrad: { threshold: 21_000, rate: 0.06 },
+};
+
 const calculateChartDataPointFromGross = (
   gross: number,
   taxFreeAllowance: number,
   pensionContributionType: PensionContributionType,
-  pensionContribution: number
+  pensionContribution: number,
+  studentLoans: StudentLoans
 ) => {
   // Adjust based on pension contribution
   let adjustedGross = gross;
@@ -190,75 +335,96 @@ const calculateChartDataPointFromGross = (
     return acc;
   }, 0);
 
-  const net = gross - tax - ni - pension;
+  const postgrad = studentLoans.postgrad
+    ? Math.max(
+        0,
+        (adjustedGross - STUDENT_LOAN_BRACKETS.postgrad.threshold) *
+          STUDENT_LOAN_BRACKETS.postgrad.rate
+      )
+    : 0;
+
+  const studentLoan = Object.entries(studentLoans).reduce(
+    (biggestRepayment, [plan, isActive]) => {
+      if (isActive) {
+        const { threshold, rate } =
+          STUDENT_LOAN_BRACKETS[plan as StudentLoanPlan];
+        const repayment = Math.max(0, (adjustedGross - threshold) * rate);
+        return Math.max(biggestRepayment, repayment);
+      }
+      return biggestRepayment;
+    },
+    0
+  );
+
+  const net = gross - tax - ni - pension - studentLoan - postgrad;
 
   // console.log(
   //   `Gross: £${gross}, Pension: £${pension}, Tax: £${tax}, NI: £${ni}, Net: £${net}`
   // );
 
-  return { gross, pension, tax, ni, net };
+  return { gross, pension, tax, ni, net, studentLoan, postgrad };
 };
 
 export const useChartData = () => {
   const {
+    chartPoints,
     chartData,
     taxFreeAllowance,
     pensionContributionType,
     pensionContribution,
     proportional,
+    studentLoans,
+    setChartPoints,
     setChartData,
     setTaxFreeAllowance,
     setPensionContributionType,
     setPensionContribution,
     setProportional,
+    setStudentLoans,
   } = useChartStore();
 
-  const addChartPoint = (gross: number) => {
-    const point = {
-      gross,
-      pension: 0,
-      tax: 0,
-      ni: 0,
-      net: gross,
-    };
-
-    const newChartData = [...chartData, point]
-      .sort((a, b) => a.gross - b.gross)
-      .map((data) =>
-        calculateChartDataPointFromGross(
-          data.gross,
-          taxFreeAllowance,
-          pensionContributionType,
-          pensionContribution
-        )
-      );
-
+  useEffect(() => {
+    // Recalculate chart data when taxFreeAllowance, pensionContributionType, or pensionContribution changes
+    const newChartData = chartPoints.map((data) =>
+      calculateChartDataPointFromGross(
+        data,
+        taxFreeAllowance,
+        pensionContributionType,
+        pensionContribution,
+        studentLoans
+      )
+    );
     setChartData(newChartData);
+  }, [
+    chartPoints,
+    taxFreeAllowance,
+    pensionContributionType,
+    pensionContribution,
+    studentLoans,
+    setChartData,
+  ]);
+
+  const addChartPoint = (point: number) => {
+    const newChartPoints = [...chartPoints, point].sort((a, b) => a - b);
+
+    setChartPoints(newChartPoints);
   };
 
-  const removeChartPoint = (gross: number) => {
-    const newData = chartData.filter((point) => point.gross !== gross);
-    setChartData(newData);
+  const removeChartPoint = (point: number) => {
+    const newData = chartPoints.filter((p) => p !== point);
+    setChartPoints(newData);
   };
 
   const resetChartPointsToDefault = () => {
-    setChartData(DEFAULT_CHART_DATA);
+    setChartPoints(DEFAULT_CHART_DATA.map((data) => data.gross));
     setTaxFreeAllowance(12570);
     setPensionContributionType("percentage");
     setPensionContribution(0);
+    setStudentLoans(DEFAULT_STUDENT_LOANS);
   };
 
   const updateTaxFreeAllowance = (amount: number) => {
     setTaxFreeAllowance(amount);
-    const newChartData = chartData.map((data) =>
-      calculateChartDataPointFromGross(
-        data.gross,
-        amount,
-        pensionContributionType,
-        pensionContribution
-      )
-    );
-    setChartData(newChartData);
   };
 
   const updatePensionContributionType = (type: PensionContributionType) => {
@@ -266,28 +432,14 @@ export const useChartData = () => {
     if (type === "percentage") {
       setPensionContribution(Math.min(100, Math.max(pensionContribution, 0))); // Default to 5% if percentage
     }
-    const newChartData = chartData.map((data) =>
-      calculateChartDataPointFromGross(
-        data.gross,
-        taxFreeAllowance,
-        type,
-        pensionContribution
-      )
-    );
-    setChartData(newChartData);
   };
 
   const updatePensionContribution = (amount: number) => {
     setPensionContribution(amount);
-    const newChartData = chartData.map((data) =>
-      calculateChartDataPointFromGross(
-        data.gross,
-        taxFreeAllowance,
-        pensionContributionType,
-        amount
-      )
-    );
-    setChartData(newChartData);
+  };
+
+  const updateStudentLoans = (loans: StudentLoans) => {
+    setStudentLoans(loans);
   };
 
   return {
@@ -297,6 +449,7 @@ export const useChartData = () => {
     pensionContributionType,
     pensionContribution,
     proportional,
+    studentLoans,
     addChartPoint,
     removeChartPoint,
     resetChartPointsToDefault,
@@ -304,5 +457,6 @@ export const useChartData = () => {
     updatePensionContributionType,
     updatePensionContribution,
     setProportional,
+    updateStudentLoans,
   };
 };
