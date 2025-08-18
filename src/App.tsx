@@ -46,7 +46,7 @@ function App() {
             orientation="vertical"
             className="ml-2 mr-4 data-[orientation=vertical]:h-4"
           />
-          <h1>Salary visualiser</h1>
+          <h1>Salary Visualiser</h1>
         </div>
         <ChartContainer
           config={chartConfig}
