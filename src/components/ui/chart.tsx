@@ -51,6 +51,7 @@ export type CustomTooltipProps = TooltipContentProps<ValueType, NameType> & {
   labelClassName?: string;
   color?: string;
   showPercent?: boolean;
+  periodicity?: "monthly" | "yearly";
 };
 
 export type ChartLegendContentProps = {
@@ -158,6 +159,7 @@ function ChartTooltipContent({
   nameKey,
   labelKey,
   showPercent = false,
+  periodicity = "yearly",
 }: CustomTooltipProps) {
   const { config } = useChart();
 
@@ -273,7 +275,16 @@ function ChartTooltipContent({
                     </div>
                     {item.value && (
                       <span className="flex flex-row gap-1 text-foreground font-mono font-medium tabular-nums">
-                        <span>{item.value.toLocaleString()}</span>
+                        <span>
+                          {new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "GBP",
+                          }).format(
+                            periodicity === "monthly"
+                              ? item.value / 12
+                              : item.value
+                          )}
+                        </span>
                         {showPercent && (
                           <span className="text-muted-foreground">
                             (

@@ -1,8 +1,8 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
+  SidebarHeader,
 } from "~/components/ui/sidebar";
 import {
   useChartData,
@@ -27,21 +27,26 @@ export function AppSidebar() {
     pensionContributionType,
     proportional,
     studentLoans,
+    periodicity,
     updateTaxFreeAllowance,
     updatePensionContribution,
     updatePensionContributionType,
     setProportional,
     updateStudentLoans,
+    setPeriodicity,
   } = useChartData();
   const { theme, setTheme } = useTheme();
 
   return (
     <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
+      <SidebarHeader>
+        <h2 className="text-lg">Settings</h2>
+      </SidebarHeader>
+      <SidebarContent className="flex flex-col gap-3">
+        <SidebarGroup className="px-2 py-0">
           {/* tax free amount */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="tax-free-allowance" className="text-sm font-medium">
+          <div className="flex flex-col gap-0.5">
+            <label htmlFor="tax-free-allowance" className="font-medium">
               Tax Free Allowance
             </label>
             <NumericFormat
@@ -59,14 +64,14 @@ export function AppSidebar() {
             />
           </div>
         </SidebarGroup>
-        <SidebarGroup>
+        <SidebarGroup className="px-2 py-0">
           {/* pension contribution */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <label
               htmlFor="pension-contribution"
               className="flex flex-row justify-between"
             >
-              <span className="text-sm font-medium">Pension Contribution</span>
+              <span className="font-medium">Pension Contribution</span>
 
               <ToggleGroup
                 variant="outline"
@@ -149,9 +154,9 @@ export function AppSidebar() {
             </p>
           </div>
         </SidebarGroup>
-        <SidebarGroup>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="student-loans" className="text-sm font-medium">
+        <SidebarGroup className="px-2 py-0">
+          <div className="flex flex-col gap-0.5">
+            <label htmlFor="student-loans" className="font-medium">
               Student Loans
             </label>
             <div className="flex flex-col gap-2">
@@ -174,28 +179,28 @@ export function AppSidebar() {
                 <ToggleGroupItem
                   value="plan1"
                   aria-label="Toggle plan1"
-                  className="flex-none"
+                  className="flex-none text-xs"
                 >
                   Plan 1
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="plan2"
                   aria-label="Toggle plan2"
-                  className="flex-none"
+                  className="flex-none text-xs"
                 >
                   Plan 2
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="plan5"
                   aria-label="Toggle plan5"
-                  className="flex-none"
+                  className="flex-none text-xs"
                 >
                   Plan 5
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="postgrad"
                   aria-label="Toggle postgrad"
-                  className="flex-none"
+                  className="flex-none text-xs"
                 >
                   Postgraduate
                 </ToggleGroupItem>
@@ -203,11 +208,46 @@ export function AppSidebar() {
             </div>
           </div>
         </SidebarGroup>
-        <SidebarGroup>
-          <div className="flex flex-col gap-1">
+        <SidebarGroup className="px-2 py-0">
+          <div className="flex flex-col gap-0.5">
+            <label
+              htmlFor="periodicity"
+              className="font-medium flex flex-row justify-between"
+            >
+              Periodicity
+            </label>
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              value={periodicity}
+              onValueChange={(value: "monthly" | "yearly") => {
+                if (!value) return;
+                setPeriodicity(value);
+              }}
+              size="xs"
+            >
+              <ToggleGroupItem
+                value="monthly"
+                aria-label="Toggle monthly periodicity"
+                className="flex-none text-xs"
+              >
+                Monthly
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="yearly"
+                aria-label="Toggle yearly periodicity"
+                className="flex-none text-xs"
+              >
+                Yearly
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        </SidebarGroup>
+        <SidebarGroup className="px-2 py-0">
+          <div className="flex flex-col gap-0.5">
             <label
               htmlFor="proportional"
-              className="text-sm font-medium flex flex-row justify-between"
+              className="font-medium flex flex-row justify-between"
             >
               Proportional
             </label>
@@ -224,14 +264,14 @@ export function AppSidebar() {
               <ToggleGroupItem
                 value="true"
                 aria-label="Toggle proportional"
-                className="flex-none"
+                className="flex-none text-xs"
               >
                 Yes
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="false"
                 aria-label="Toggle not proportional"
-                className="flex-none"
+                className="flex-none text-xs"
               >
                 No
               </ToggleGroupItem>
@@ -244,11 +284,11 @@ export function AppSidebar() {
             </p>
           </div>
         </SidebarGroup>
-        <SidebarGroup>
-          <div className="flex flex-col gap-1">
+        <SidebarGroup className="px-2 py-0">
+          <div className="flex flex-col gap-0.5">
             <label
               htmlFor="theme"
-              className="text-sm font-medium flex flex-row justify-between"
+              className="font-medium flex flex-row justify-between"
             >
               Theme
             </label>
@@ -265,50 +305,51 @@ export function AppSidebar() {
               <ToggleGroupItem
                 value="dark"
                 aria-label="Toggle dark theme"
-                className="flex-none"
+                className="flex-none text-xs"
               >
                 Dark
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="light"
                 aria-label="Toggle light theme"
-                className="flex-none"
+                className="flex-none text-xs"
               >
                 Light
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="system"
                 aria-label="Toggle system theme"
-                className="flex-none"
+                className="flex-none text-xs"
               >
                 System
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
         </SidebarGroup>
+        <SidebarGroup className="flex flex-col gap-0.5 mt-auto">
+          <p className="text-xs text-muted-foreground">
+            * This is not likely to be completely accurate, or regularly
+            updated.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Numbers are rounded, some simplifications might have been made and a
+            lot of variables aren't considered.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Maybe, use another more accurate and up to date tool like:{" "}
+            <a
+              className="text-primary hover:underline"
+              target="_blank"
+              href="https://www.thesalarycalculator.co.uk/"
+            >
+              https://www.thesalarycalculator.co.uk/
+            </a>
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Better still, talk to a financial professional.
+          </p>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <p className="text-xs text-muted-foreground">
-          * This is not likely to be completely accurate, or regularly updated.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Numbers are rounded, some simplifications might have been made and a
-          lot of variables aren't considered.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Maybe, use another more accurate and up to date tool like:{" "}
-          <a
-            className="text-primary hover:underline"
-            target="_blank"
-            href="https://www.thesalarycalculator.co.uk/"
-          >
-            https://www.thesalarycalculator.co.uk/
-          </a>
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Better still, talk to a financial professional.
-        </p>
-      </SidebarFooter>
     </Sidebar>
   );
 }

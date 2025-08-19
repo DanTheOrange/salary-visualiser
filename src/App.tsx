@@ -41,7 +41,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function App() {
-  const { pensionContributionType, studentLoans, proportional } =
+  const { pensionContributionType, studentLoans, proportional, periodicity } =
     useChartData();
   const { chartData } = useChartData();
 
@@ -55,11 +55,11 @@ function App() {
             orientation="vertical"
             className="ml-2 mr-4 data-[orientation=vertical]:h-4"
           />
-          <h1>Salary Visualiser</h1>
+          <h1 className="text-lg">Salary Visualiser</h1>
         </div>
         <ChartContainer
           config={chartConfig}
-          className="min-h-[200px] max-h-[calc(100vh_-_5.5rem)] w-full"
+          className="min-h-[200px] max-h-[calc(100vh_-_5.5rem)] w-full h-full"
         >
           <AreaChart
             accessibilityLayer
@@ -77,7 +77,13 @@ function App() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => new Intl.NumberFormat().format(value)}
+              tickFormatter={(value) =>
+                new Intl.NumberFormat("en-GB", {
+                  style: "currency",
+                  currency: "GBP",
+                  minimumFractionDigits: 0,
+                }).format(value)
+              }
             />
             <ChartTooltip
               cursor={false}
@@ -86,9 +92,31 @@ function App() {
                   {...props}
                   indicator="line"
                   labelKey="gross"
-                  labelFormatter={(value) =>
-                    new Intl.NumberFormat().format(value)
-                  }
+                  labelFormatter={(value) => (
+                    <div className="flex flex-row justify-between items-baseline">
+                      <span className="text-sm">
+                        {new Intl.NumberFormat("en-GB", {
+                          style: "currency",
+                          currency: "GBP",
+                          minimumFractionDigits: 0,
+                        }).format(value)}
+                      </span>
+                      {periodicity === "monthly" && (
+                        <>
+                          {" "}
+                          <span className="text-xs">
+                            {new Intl.NumberFormat("en-GB", {
+                              style: "currency",
+                              currency: "GBP",
+                              minimumFractionDigits: 0,
+                            }).format(value / 12)}{" "}
+                            Monthly
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  periodicity={periodicity}
                   showPercent
                 />
               )}

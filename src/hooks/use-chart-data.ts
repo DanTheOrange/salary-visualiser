@@ -177,6 +177,9 @@ const DEFAULT_STUDENT_LOANS: StudentLoans = {
   postgrad: false,
 };
 
+export const PERIODICITY = ["monthly", "yearly"] as const;
+export type Periodicity = (typeof PERIODICITY)[number];
+
 interface ChartState {
   chartPoints: number[];
   chartData: ChartData;
@@ -185,6 +188,7 @@ interface ChartState {
   pensionContribution: number;
   proportional: boolean;
   studentLoans: StudentLoans;
+  periodicity: Periodicity; // Optional periodicity for future use
   setChartPoints: (points: number[]) => void;
   setChartData: (data: ChartData) => void;
   setTaxFreeAllowance: (amount: number) => void;
@@ -192,6 +196,7 @@ interface ChartState {
   setPensionContribution: (amount: number) => void;
   setProportional: (value: boolean) => void;
   setStudentLoans: (loans: StudentLoans) => void;
+  setPeriodicity: (periodicity: Periodicity) => void;
 }
 
 const useChartStore = create<ChartState>()(
@@ -205,6 +210,7 @@ const useChartStore = create<ChartState>()(
         pensionContribution: 0,
         proportional: false,
         studentLoans: DEFAULT_STUDENT_LOANS,
+        periodicity: "yearly",
         setChartPoints: (points) => set({ chartPoints: points }),
         setChartData: (data) => set({ chartData: data }),
         setTaxFreeAllowance: (amount) => set({ taxFreeAllowance: amount }),
@@ -214,6 +220,7 @@ const useChartStore = create<ChartState>()(
           set({ pensionContribution: amount }),
         setProportional: (value) => set({ proportional: value }),
         setStudentLoans: (loans) => set({ studentLoans: loans }),
+        setPeriodicity: (periodicity) => set({ periodicity }),
       }),
       {
         name: "chart-storage",
@@ -373,6 +380,7 @@ export const useChartData = () => {
     pensionContributionType,
     pensionContribution,
     proportional,
+    periodicity,
     studentLoans,
     setChartPoints,
     setChartData,
@@ -381,6 +389,7 @@ export const useChartData = () => {
     setPensionContribution,
     setProportional,
     setStudentLoans,
+    setPeriodicity,
   } = useChartStore();
 
   useEffect(() => {
@@ -401,6 +410,7 @@ export const useChartData = () => {
     pensionContributionType,
     pensionContribution,
     studentLoans,
+    periodicity,
     setChartData,
   ]);
 
@@ -450,6 +460,7 @@ export const useChartData = () => {
     pensionContribution,
     proportional,
     studentLoans,
+    periodicity,
     addChartPoint,
     removeChartPoint,
     resetChartPointsToDefault,
@@ -458,5 +469,6 @@ export const useChartData = () => {
     updatePensionContribution,
     setProportional,
     updateStudentLoans,
+    setPeriodicity,
   };
 };
