@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import { ThemeProvider } from "~/components/theme-provider.tsx";
 import { SidebarProvider } from "./components/ui/sidebar.tsx";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
+import { Analytics } from "@vercel/analytics/next";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -15,5 +16,6 @@ createRoot(document.getElementById("root")!).render(
         </TooltipProvider>
       </SidebarProvider>
     </ThemeProvider>
+    <Analytics />
   </StrictMode>
 );
