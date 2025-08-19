@@ -48,7 +48,7 @@ function App() {
   return (
     <>
       <AppSidebar />
-      <main className="m-4 max-h-screen overflow-none w-full">
+      <main className="m-4 max-h-dvh overflow-none w-full">
         <div className="flex items-center mb-4">
           <SidebarTrigger />
           <Separator

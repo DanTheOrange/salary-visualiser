@@ -51,6 +51,7 @@ export function AppSidebar() {
             </label>
             <NumericFormat
               id="tax-free-allowance"
+              className="h-8 px-2"
               customInput={Input}
               prefix="£"
               placeholder="£12,570"
@@ -123,6 +124,7 @@ export function AppSidebar() {
             </label>
             <NumericFormat
               id="pension-contribution"
+              className="h-8 px-2"
               customInput={Input}
               prefix={pensionContributionType === "defined" ? "£" : undefined}
               suffix={
