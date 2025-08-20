@@ -252,7 +252,7 @@ export function AppSidebar() {
                   {usefulSalaries.map((point) => (
                     <li
                       key={point}
-                      className="flex flex-row items-center text-xs bg-green-600/50 text-accent-foreground rounded-md"
+                      className="flex flex-row items-center text-xs bg-green-300/50 dark:bg-green-600/50 rounded-md"
                     >
                       <span className="px-1 py-0.5">
                         {new Intl.NumberFormat("en-GB", {
