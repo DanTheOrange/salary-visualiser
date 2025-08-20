@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 type ChartData = {
   gross: number;
@@ -414,23 +415,25 @@ export const useChartData = () => {
     setChartData,
   ]);
 
-  const addChartPoint = (point: number) => {
-    const newChartPoints = [...chartPoints, point].sort((a, b) => a - b);
-
-    setChartPoints(newChartPoints);
-  };
-
-  const removeChartPoint = (point: number) => {
-    const newData = chartPoints.filter((p) => p !== point);
-    setChartPoints(newData);
-  };
-
   const resetChartPointsToDefault = () => {
     setChartPoints(DEFAULT_CHART_DATA.map((data) => data.gross));
     setTaxFreeAllowance(12570);
     setPensionContributionType("percentage");
     setPensionContribution(0);
     setStudentLoans(DEFAULT_STUDENT_LOANS);
+  };
+
+  const addChartPoint = (point: number) => {
+    if (chartPoints.includes(point)) {
+      toast.info("Can't create duplicate points.");
+      return;
+    }
+
+    setChartPoints([...chartPoints, point].sort((a, b) => a - b));
+  };
+
+  const removeChartPoint = (index: number) => {
+    setChartPoints(chartPoints.filter((point) => point !== index));
   };
 
   const updateTaxFreeAllowance = (amount: number) => {
@@ -461,6 +464,7 @@ export const useChartData = () => {
     proportional,
     studentLoans,
     periodicity,
+    setChartPoints,
     addChartPoint,
     removeChartPoint,
     resetChartPointsToDefault,

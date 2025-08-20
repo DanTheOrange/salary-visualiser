@@ -12,22 +12,29 @@ import {
 import { NumericFormat } from "react-number-format";
 import { Input } from "./ui/input";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { Ban, Percent, PoundSterling } from "lucide-react";
+import { Ban, Percent, Plus, PoundSterling, X } from "lucide-react";
 import { useTheme } from "./theme-provider";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 export function AppSidebar() {
   const {
+    chartPoints,
     taxFreeAllowance,
     pensionContribution,
     pensionContributionType,
     proportional,
     studentLoans,
     periodicity,
+    resetChartPointsToDefault,
+    addChartPoint,
+    removeChartPoint,
     updateTaxFreeAllowance,
     updatePensionContribution,
     updatePensionContributionType,
@@ -35,12 +42,27 @@ export function AppSidebar() {
     updateStudentLoans,
     setPeriodicity,
   } = useChartData();
+  const [salary, setSalary] = useState<string | undefined>(undefined);
   const { theme, setTheme } = useTheme();
+
+  const usefulSalaries = [12570, 34000, 50700, 100000, 125140].filter(
+    (point) => !chartPoints.includes(point)
+  );
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="flex flex-row items-center justify-between">
         <h2 className="text-lg">Settings</h2>
+        <Button
+          variant="outline"
+          size="xs"
+          onClick={() => {
+            toast.info("Resetting chart points to default.");
+            resetChartPointsToDefault();
+          }}
+        >
+          Reset
+        </Button>
       </SidebarHeader>
       <SidebarContent className="flex flex-col gap-3">
         <SidebarGroup className="px-2 py-0">
@@ -154,6 +176,117 @@ export function AppSidebar() {
               calculation. If you are a higher rate tax payer, you will need to
               take extra steps to claim back tax.
             </p>
+          </div>
+        </SidebarGroup>
+        <SidebarGroup className="px-2 py-0">
+          <div className="flex flex-col gap-0.5">
+            <label htmlFor="salaries" className="font-medium">
+              Salaries
+            </label>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row">
+                <NumericFormat
+                  id="salaries"
+                  className="h-8 px-2"
+                  customInput={Input}
+                  prefix="£"
+                  placeholder="£34,000"
+                  thousandSeparator
+                  value={salary}
+                  onValueChange={({ floatValue }) => {
+                    setSalary(floatValue?.toString() ?? "");
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.key === "Enter") {
+                      if (salary === undefined) {
+                        toast.error("Please enter a valid salary.");
+                        return;
+                      }
+                      addChartPoint(Number(salary));
+                      setSalary("");
+                    }
+                  }}
+                />
+                <Button
+                  size="icon"
+                  className="ml-2 h-8"
+                  disabled={salary === undefined}
+                  onClick={() => {
+                    if (salary === undefined) {
+                      toast.error("Please enter a valid salary.");
+                      return;
+                    }
+                    addChartPoint(Number(salary));
+                    setSalary("");
+                  }}
+                >
+                  <Plus className="size-4" />
+                </Button>
+              </div>
+              {chartPoints.length > 0 && (
+                <ul className="flex flex-row gap-1 flex-wrap">
+                  {chartPoints.map((point) => (
+                    <li
+                      key={point}
+                      className="flex flex-row items-center text-xs bg-accent text-accent-foreground rounded-md"
+                    >
+                      <span className="px-1 py-0.5">
+                        {new Intl.NumberFormat("en-GB", {
+                          style: "currency",
+                          currency: "GBP",
+                          minimumFractionDigits: 0,
+                        }).format(point)}
+                      </span>
+                      <button
+                        className="border-l border-white/50 h-full px-1 cursor-pointer"
+                        onClick={() => removeChartPoint(point)}
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {usefulSalaries.length > 0 && (
+                <ul className="flex flex-row gap-1 flex-wrap">
+                  {usefulSalaries.map((point) => (
+                    <li
+                      key={point}
+                      className="flex flex-row items-center text-xs bg-green-600/50 text-accent-foreground rounded-md"
+                    >
+                      <span className="px-1 py-0.5">
+                        {new Intl.NumberFormat("en-GB", {
+                          style: "currency",
+                          currency: "GBP",
+                          minimumFractionDigits: 0,
+                        }).format(point)}
+                      </span>
+                      <button
+                        className="border-l border-white/50 h-full px-1 cursor-pointer"
+                        onClick={() => addChartPoint(point)}
+                      >
+                        <Plus className="size-3" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {/* <MultiCombobox
+                className="w-full h-8 has-[>svg]:px-2"
+                options={chartPoints.map((point) => ({
+                  label: Intl.NumberFormat("en-GB", {
+                    style: "currency",
+                    currency: "GBP",
+                    minimumFractionDigits: 0,
+                  }).format(point),
+                  value: String(point),
+                }))}
+                values={chartPoints.map((v) => String(v))}
+                onChange={(values) =>
+                  setChartPoints(values.map((v) => Number(v)))
+                }
+              /> */}
+            </div>
           </div>
         </SidebarGroup>
         <SidebarGroup className="px-2 py-0">
