@@ -7,7 +7,7 @@ import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
   Command,
-  CommandCurrencyInput,
+  // CommandCurrencyInput,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { NumericFormat } from "react-number-format";
+// import { NumericFormat } from "react-number-format";
 
 type Option = {
   value: string;
@@ -59,10 +59,7 @@ export function MultiCombobox({
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
-          <CommandCurrencyInput
-            placeholder="Search framework..."
-            className="h-9"
-          />
+          <CommandInput placeholder="Search framework..." className="h-9" />
           <CommandList>
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
